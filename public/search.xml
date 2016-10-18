@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+    
+    <entry>
+      <title><![CDATA[Angular2 使用路由，列表跳转详情]]></title>
+      <url>http://yoursite.com/2016/10/18/Angular2%20%E4%BD%BF%E7%94%A8%E8%B7%AF%E7%94%B1%EF%BC%8C%E5%88%97%E8%A1%A8%E8%B7%B3%E8%BD%AC%E8%AF%A6%E6%83%85/</url>
+      <content type="text"><![CDATA[Angular2 使用路由，列表跳转详情参考官方指导教程https://angular.cn/docs/ts/latest/tutorial/toh-pt5.html 示例一12345678910111213141516171819202122232425262728293031import &#123; Component, OnInit &#125; from '@angular/core';import &#123; Router &#125; from '@angular/router';import &#123; Hero &#125; from './hero';import &#123; HeroService &#125; from './hero.service';@Component(&#123; moduleId: module.id, selector: 'my-dashboard', templateUrl: 'dashboard.component.html', styleUrls: [ 'dashboard.component.css' ]&#125;)export class DashboardComponent implements OnInit &#123; heroes: Hero[] = []; constructor( private router: Router, private heroService: HeroService) &#123; &#125; ngOnInit(): void &#123; this.heroService.getHeroes() .then(heroes =&gt; this.heroes = heroes.slice(1, 5)); &#125; gotoDetail(hero: Hero): void &#123; let link = ['/detail', hero.id]; this.router.navigate(link); &#125;&#125; 示例二123456789101112131415161718192021222324252627282930313233343536import &#123; Component, OnInit &#125; from '@angular/core';import &#123; Router &#125; from '@angular/router';import &#123; Hero &#125; from './hero';import &#123; HeroService &#125; from './hero.service';@Component(&#123; moduleId: module.id, selector: 'my-heroes', templateUrl: 'heroes.component.html', styleUrls: [ 'heroes.component.css' ]&#125;)export class HeroesComponent implements OnInit &#123; heroes: Hero[]; selectedHero: Hero; constructor( private router: Router, private heroService: HeroService) &#123; &#125; getHeroes(): void &#123; this.heroService.getHeroes().then(heroes =&gt; this.heroes = heroes); &#125; ngOnInit(): void &#123; this.getHeroes(); &#125; onSelect(hero: Hero): void &#123; this.selectedHero = hero; &#125; gotoDetail(): void &#123; this.router.navigate(['/detail', this.selectedHero.id]); &#125;&#125;]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[Angular2 如何使用路由返回上一级，如何获取路由参数]]></title>
+      <url>http://yoursite.com/2016/10/18/Angular2%20%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E8%B7%AF%E7%94%B1%E8%BF%94%E5%9B%9E%E4%B8%8A%E4%B8%80%E7%BA%A7%EF%BC%8C%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96%E8%B7%AF%E7%94%B1%E5%8F%82%E6%95%B0/</url>
+      <content type="text"><![CDATA[参见官网教程https://angular.cn/docs/ts/latest/tutorial/toh-pt5.html #代码示例 123456789101112131415161718192021222324252627282930313233343536import &#123; Component, OnInit &#125; from '@angular/core';import &#123; ActivatedRoute, Params &#125; from '@angular/router';import &#123; Location &#125; from '@angular/common';import &#123; Hero &#125; from './hero';import &#123; HeroService &#125; from './hero.service';@Component(&#123; moduleId: module.id, selector: 'my-hero-detail', templateUrl: 'hero-detail.component.html', styleUrls: [ 'hero-detail.component.css' ]&#125;)export class HeroDetailComponent implements OnInit &#123; hero: Hero; constructor( private heroService: HeroService, private route: ActivatedRoute, private location: Location ) &#123;&#125; ngOnInit(): void &#123; //获取路由参数 this.route.params.forEach((params: Params) =&gt; &#123; let id = +params['id']; this.heroService.getHero(id) .then(hero =&gt; this.hero = hero); &#125;); &#125; //返回上一级 goBack(): void &#123; this.location.back(); &#125;&#125;]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[《JavaScript 设计模式与开发实践》要点整理]]></title>
+      <url>http://yoursite.com/2016/10/18/%E3%80%8AJavaScript%20%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%8E%E5%BC%80%E5%8F%91%E5%AE%9E%E8%B7%B5%E3%80%8B%E8%A6%81%E7%82%B9%E6%95%B4%E7%90%86/</url>
+      <content type="text"><![CDATA[《JavaScript 设计模式与开发实践》要点整理单例模式 定义：保证一个类仅有一个实例，并提供一个访问它的全局访问点 举例：网页登录框 重点： 惰性单例，instance实例对象在调用Singleton.getInstance的时候才被创建，而不是在页面加载好的时候就创建。 通用的惰性单例，把创建对象和管理单例的逻辑分开12345678910111213141516//管理单例var getSingle = function(fn)&#123; var result; return function()&#123; return result || (result = fn.apply(this, arguments)); &#125;&#125;//创建单例var createLoginLayer = function()&#123; var div = document.createElement('div'); ... return div;&#125;//使用单例var createSingleLoginLayer = getSingle(createLoginLayer);... 策略模式 定义：定义一系列的算法，把它们一个个封装起来，并且使它们可以互相替换。 举例： 年终奖发放，根据级别的基本工资按照不同的倍数发钱。 表单校验，单个规则/多个规则等 缓动动画，小球的移动等 重点： 多态的体现 算法的使用方式不变，但是算法的实现是变化的 一个基于策略模式的程序至少需要两部分组成，一部分是一组策略类，策略类封装了具体的算法，并负责具体的计算过程。第二个部分是环境类Context，Context接受客户的请求，随后把请求委托给某一个策略类。 代理模式 定义：为一个对象提供一个代用品或占位符，以便控制对它的访问。 举例： 小明追MM，借助一个共同的朋友给女神送花 保护代理：代理B可以帮助A过滤掉一些请求。保护代理用于控制不同权限的对象对目标对象的访问，但在JavaScript并不容易实现保护代理，因为我们无法判断谁访问了某个对象。 虚拟代理（最常用）：把一些开销很大的对象，延迟到真正需要它的时候才去创建 ==虚拟代理实现图片的预加载== 虚拟代理合并http请求，减少频繁的网络请求。 缓存代理：计算乘积，ajax异步请求数据 重点： 代理的意义：==符合单一职责原则== 不需要去预先猜测是否需要使用代理模式，当真正发现不方便直接访问某个对象的时候，再编写代理也不迟 迭代器模式 定义：提供一种方法顺序访问一个聚合对象中的各个元素，而又不需要暴露该对象的内部表示。 举例： jQuery中的迭代器 内部迭代器：函数内部定义好了迭代规则。在调用时非常方便，外界不关心迭代器内部的实现。 外部迭代器：必须显示的请求下一个元素。增加了调用的复杂度，但是增强了迭代器的灵活性。 倒序迭代器 中止迭代器：提供跳出循环的方法。 ==根据不同的浏览器获取相应的上传组件对象== 重点： 迭代类数据对象和字面量对象，比如arguments。只要迭代的聚合对象拥有length属性而且可以用下标访问，那么它就可以被迭代。 发布-订阅模式（观察者模式） 定义：定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都将得到通知。 举例 售楼处和购房者：有任何消息，售楼处通知购房者，而不是购房者每天打电话询问有没有消息。 DOM事件，在DOM节点上绑定事件函数，就是发布-订阅模式 让所有对象都拥有发布-订阅功能，把发布-订阅功能提取出来，放在一个单独的对象内；再定义一个函数，这个函数可以给所有的对象都动态安装发布-订阅功能。 取消订阅 网站登录，获取用户信息成功之后，设置header模块的头像、设置导航模块的头像、刷新消息列表、刷新购物车列表。==使用发布订阅模式，对用户信息感兴趣的业务模块将自行订阅登录成功的消息事件。== 全局的发布-订阅对象，给每个发布者都添加listen和trigger方法以及一个缓存列表，是一种资源浪费。小明和售楼处对象还是存在一定的耦合性，小明至少需要知道售楼处对象的名字是salesOffices，才能顺利的订阅到事件。==发布-订阅模式可以用一个全局的Event对象来实现，订阅者不需要了解消息来自于哪个发布者，发布者也不知道消息会推送给哪些订阅者。== 模块间通信，基于全局的发布-订阅模式，可以利用它在两个封装良好的模块中进行通信。==太多的全局发布-订阅模式，模块间的联系被隐藏到了背后，最终会搞不清楚消息来自哪个模块，会给委会带来一些麻烦。== 先发布后订阅，建立一个存放离线事件的堆栈，事件发布时还没有订阅者来订阅，把发布时间包裹在包装函数里存入堆栈。有人来订阅，遍历堆栈并且依次执行包装函数，也就是重新发布里面的事件。 使用命名空间 ==一个很大很全的发布-订阅模式代码== 重点： 发布-订阅模式可以广泛应用于异步编程中，这是一种替代传递回调函数的方案。 发布-订阅模式可以取代对象之间的硬编码的通知机制，一个对象不用再显示地调用另外一个对象的某个接口。 推模型是指在事件发生时，发布者一次性把所有更改的状态和数据都推送给订阅者。 拉模型，发布者仅仅通知订阅者事件已经发生了，发布者需要提供一些公开的接口供订阅者主动拉取数据。拉模型的好处是可以让订阅者“按需获取”，同时有可能让发布者变成一个“门户大开”的对象，增加了代码量和复杂度。、 在JavaScript中，arguments可以很方便的表示参数列表，所以我们一般会选择==推模型==，使用Function.protype.apply方法把所有的参数都推送给订阅者。 缺点：创建订阅者要消耗一定的时间和内存；当订阅一个消息后，也许消息最后都未发生，但这个订阅者会始终存在内存中。过度使用会减少对象之间的联系，导致程序难以跟踪维护和理解。]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[booknotes]]></title>
+      <url>http://yoursite.com/2016/09/06/booknotes/</url>
+      <content type="text"><![CDATA[node读书笔记《Node.js项目实践 构建可扩展的Web应用》源码：https://github.com/azat-co/practicalnode 简介：书中使用了Express4.0，介绍了：Express脚手架、Mocha测试驱动开发、Mocha行为驱动开发、Jade和Handlebars模板引擎（书中的实例主要使用Jade）、Mongoskin（书中大部分示例使用的是Mongoskin）、基于session的OAuth用户认证和授权、Mongoose（使用Mongoose对博客示例进行了重构）、基于Express.js和Hapi构建REST API服务、使用WebSocket、Socket.IO和DerbyJS搭建实时的web应用程序，实例是一个实时更新的在线编辑器、Node应用上线和部署 示例：博客，使用了Bootstrap，完成了文章列表、文章详情、文章发布、用户权限以及第三方登录授权（Twitter） 心得：介绍的比较全面，开发时可以参考：如何基于Express脚手架新建工程、测试驱动开发、MongoDB持久化、API服务构建以及用户认证和授权 《Node与Express开发》基础内容较多，但是后面几章介绍了安全、生产环境配置、静态内容如何部署、服务托管、维护等内容，值得一读 主要使用Handlebars模板 重点关注书中表单处理、发送邮件以及生产环境配置、部署、维护等章节 《Node应用程序构建》源码：https://github.com/Swiftam/book-node-mongodb-backbone 偏向与实战，以开发一个社交网站的实例介绍了Express、Mongoose、Socket.IO的使用，使用了Jade和Backbone 缺点是使用Express3.x，比较旧了，适合入门阅读 使用Mongoose的代码值得参考 实例：可以在线聊天的社交网站，使用了Socket.io完成实时操作]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[ti_scrollview]]></title>
+      <url>http://yoursite.com/2016/08/03/ti-scrollview/</url>
+      <content type="text"><![CDATA[Titanium ScrollView做成widget时的一些局限在开发中遇到这样的需求：输入身高/体重时，需要使用可以滑动的刻度尺输入，素材只有一张图片（有刻度，没有刻度文字） 开发思路就是在一个ScrollView中，放入n张图片，然后在图片上添加文字label 写demo的时候在ios和android上一切正常，标尺滑动也非常流畅，但当这个组件封装成widget之后，在ios上滑动非常不流畅，经过反复验证，发现是在scroll listener中修改label的text时导致的，按照ti与native交互的原理，问题应该是scroll事件触发太频繁，修改UI的任务太多，导致响应慢。但是非widget方式却不存在这个问题，莫非是require会导致性能下降？真正的原因还不得而知。 尝试了使用_.defer，没什么改善 最后为了实现功能，只好将更新UI的代码放在了dragend事件的监听中]]></content>
+    </entry>
+
+    
+    <entry>
+      <title><![CDATA[reading]]></title>
+      <url>http://yoursite.com/2016/08/02/reading/</url>
+      <content type="text"><![CDATA[如何将ReactNative开源项目reading工程改造成另外一个工程IOS 创建一个工程helloword 把reading的app文件夹复制到helloworld文件夹下 修改helloworld的index.ios.js 使用xcode打开工程，添加缺失的library 添加helloworld工程的header search pathTARGETS-helloworld-Build Settings-Hearder search Paths$(inherited)/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include $(SRCROOT)/../node_modules/react-native/React/$(SRCROOT)/../node_modules/react-native-wechat/ios/ $(SRCROOT)/../node_modules/react-native-code-push/**$(SRCROOT)/../node_modules/react-native-device-info/RNDeviceInfo 添加RCTWeChat.xcodeproj的Hearder search Paths，否则会编译失败$(inherited)$(SRCROOT)/../../react-native/React/$(SRCROOT)/../../react-native/Libraries/Image/ 添加CodePush.codeproj的Hearder search Paths$(inherited)/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include$(SRCROOT)/../../react-native/React/$(SRCROOT)/../Examples/CodePushDemoApp/node_modules/react-native/React/ 添加其它需要的配置，参考wechat模块readme 参考：https://github.com/weflex/react-native-wechat]]></content>
+    </entry>
+
+    
+  
+  
+</search>
