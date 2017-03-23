@@ -87,7 +87,7 @@
 <meta name="description" content="工匠之路慢慢修炼">
 <meta property="og:type" content="website">
 <meta property="og:title" content="小工程序员">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://jackgreentemp.github.io/index.html">
 <meta property="og:site_name" content="小工程序员">
 <meta property="og:description" content="工匠之路慢慢修炼">
 <meta name="twitter:card" content="summary">
@@ -113,7 +113,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://jackgreentemp.github.io/"/>
 
   <title> 小工程序员 </title>
 </head>
@@ -269,6 +269,150 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/02/27/开源项目GeekNews/" itemprop="url">
+                  开源项目GeekNews
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-02-27T21:27:46+08:00" content="2017-02-27">
+              2017-02-27
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/02/27/开源项目GeekNews/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/27/开源项目GeekNews/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="项目地址"><a href="#项目地址" class="headerlink" title="项目地址"></a>项目地址</h1><p><a href="https://github.com/codeestX/GeekNews" target="_blank" rel="external">https://github.com/codeestX/GeekNews</a></p>
+<h1 id="值得借鉴的地方"><a href="#值得借鉴的地方" class="headerlink" title="值得借鉴的地方"></a>值得借鉴的地方</h1><ol>
+<li>项目结构（MVP+Dagger2）</li>
+<li>Retrofit对多个baseUrl的管理</li>
+<li>realm的使用</li>
+<li>侧边栏导航、tab导航的使用</li>
+<li>单Activity+多Fragment的管理（基于me.yokeyword:fragmentation）</li>
+<li>页面跳转共享资源的使用（列表-&gt;详情共享新闻图片）</li>
+<li>==搜索框的使用，搜索时间的发布订阅处理逻辑==</li>
+</ol>
+<h1 id="解读"><a href="#解读" class="headerlink" title="解读"></a>解读</h1><ol>
+<li>RxBus事件总线</li>
+</ol>
+<p>DailyPresenter的构造方法中有一个registerEvent方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Inject</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">DailyPresenter</span><span class="params">(RetrofitHelper mRetrofitHelper,RealmHelper mRealHelper)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.mRetrofitHelper = mRetrofitHelper;</div><div class="line">    <span class="keyword">this</span>.mRealmHelper = mRealHelper;</div><div class="line">    registerEvent();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>registerEvent()是订阅RxBus事件的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">registerEvent</span><span class="params">()</span> </span>&#123;</div><div class="line">    Subscription rxSubscription = RxBus.getDefault().toObservable(CalendarDay.class)</div><div class="line">            .subscribeOn(Schedulers.io())</div><div class="line">            .map(<span class="keyword">new</span> Func1&lt;CalendarDay, String&gt;() &#123;</div><div class="line">            ...</div></pre></td></tr></table></figure>
+<p>在DailyFragment中，发布RxBus事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() &#123;</div><div class="line">    @Override</div><div class="line">    public void onRefresh() &#123;</div><div class="line">        if(currentDate.equals(DateUtil.getTomorrowDate())) &#123;</div><div class="line">            mPresenter.getDailyData();</div><div class="line">        &#125; else &#123;</div><div class="line">            int year = Integer.valueOf(currentDate.substring(0,4));</div><div class="line">            int month = Integer.valueOf(currentDate.substring(4,6));</div><div class="line">            int day = Integer.valueOf(currentDate.substring(6,8));</div><div class="line">            CalendarDay date = CalendarDay.from(year, month - 1, day);</div><div class="line">            RxBus.getDefault().post(date);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<ol>
+<li>DailyAdapter</li>
+</ol>
+<p>有三种样式：图片滚动栏（类似于web的banner）、日期、新闻item</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public int getItemViewType(int position) &#123;</div><div class="line">    if(!isBefore) &#123;</div><div class="line">        if(position == 0) &#123;</div><div class="line">            return ITEM_TYPE.ITEM_TOP.ordinal();</div><div class="line">        &#125; else if(position == 1) &#123;</div><div class="line">            return ITEM_TYPE.ITEM_DATE.ordinal();</div><div class="line">        &#125; else &#123;</div><div class="line">            return ITEM_TYPE.ITEM_CONTENT.ordinal();</div><div class="line">        &#125;</div><div class="line">    &#125; else &#123;</div><div class="line">        if(position == 0) &#123;</div><div class="line">            return ITEM_TYPE.ITEM_DATE.ordinal();</div><div class="line">        &#125; else &#123;</div><div class="line">            return ITEM_TYPE.ITEM_CONTENT.ordinal();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中positi==0的就是图片滚动栏，由一个ViewPager实现，该ViewPager的Adapter是由另外一个Adapter持有的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) &#123;</div><div class="line">    if(viewType == ITEM_TYPE.ITEM_TOP.ordinal()) &#123;</div><div class="line">        mAdapter = new TopPagerAdapter(mContext,mTopList);</div><div class="line">        return new TopViewHolder(inflater.inflate(R.layout.item_top, parent, false));</div><div class="line">    &#125; else if(viewType == ITEM_TYPE.ITEM_DATE.ordinal()) &#123;</div><div class="line">        return new DateViewHolder(inflater.inflate(R.layout.item_date, parent, false));</div><div class="line">    &#125;</div><div class="line">    return new ContentViewHolder(inflater.inflate(R.layout.item_daily, parent, false));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>compose的使用</li>
+</ol>
+<p>可以少写切换线程的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">public void getDailyData() &#123;</div><div class="line">    Subscription rxSubscription = mRetrofitHelper.fetchDailyListInfo()</div><div class="line">            .compose(RxUtil.&lt;DailyListBean&gt;rxSchedulerHelper())</div><div class="line">            ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中的compose主要是在io线程处理数据，ui线程处理结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 统一线程处理</div><div class="line"> * @param &lt;T&gt;</div><div class="line"> * @return</div><div class="line"> */</div><div class="line">public static &lt;T&gt; Observable.Transformer&lt;T, T&gt; rxSchedulerHelper() &#123;    //compose简化线程</div><div class="line">    return new Observable.Transformer&lt;T, T&gt;() &#123;</div><div class="line">        @Override</div><div class="line">        public Observable&lt;T&gt; call(Observable&lt;T&gt; observable) &#123;</div><div class="line">            return observable.subscribeOn(Schedulers.io())</div><div class="line">                    .observeOn(AndroidSchedulers.mainThread());</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>新闻的item点击进入detail时会共享新闻图片</li>
+</ol>
+<p>xml如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">com.codeest.geeknews.widget.SquareImageView</span></span></div><div class="line">    <span class="attr">android:id</span>=<span class="string">"@+id/iv_daily_item_image"</span></div><div class="line">    <span class="attr">android:transitionName</span>=<span class="string">"shareView"</span></div><div class="line">    <span class="attr">android:src</span>=<span class="string">"@mipmap/ic_launcher"</span></div><div class="line">    <span class="attr">android:layout_width</span>=<span class="string">"@dimen/list_image_size"</span></div><div class="line">    <span class="attr">android:layout_height</span>=<span class="string">"@dimen/list_image_size"</span> /&gt;</div><div class="line">    ...</div></pre></td></tr></table></figure>
+<p>java如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">mAdapter.setOnItemClickListener(<span class="keyword">new</span> DailyAdapter.OnItemClickListener() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemClick</span><span class="params">(<span class="keyword">int</span> position,View shareView)</span> </span>&#123;</div><div class="line">        mPresenter.insertReadToDB(mList.get(position).getId());</div><div class="line">        mAdapter.setReadState(position,<span class="keyword">true</span>);</div><div class="line">        <span class="keyword">if</span>(mAdapter.getIsBefore()) &#123;</div><div class="line">            mAdapter.notifyItemChanged(position + <span class="number">1</span>);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            mAdapter.notifyItemChanged(position + <span class="number">2</span>);</div><div class="line">        &#125;</div><div class="line">        Intent intent = <span class="keyword">new</span> Intent();</div><div class="line">        intent.setClass(mContext, ZhihuDetailActivity.class);</div><div class="line">        intent.putExtra(<span class="string">"id"</span>,mList.get(position).getId());</div><div class="line">        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(mActivity, shareView, <span class="string">"shareView"</span>);</div><div class="line">        mContext.startActivity(intent,options.toBundle());</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>detail中做如下处理</p>
+<p>xml如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">android.support.design.widget.AppBarLayout</span></span></div><div class="line">    <span class="attr">android:id</span>=<span class="string">"@+id/app_bar"</span></div><div class="line">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">    <span class="attr">android:transitionName</span>=<span class="string">"shareView"</span></div><div class="line">    <span class="attr">android:fitsSystemWindows</span>=<span class="string">"true"</span>&gt;</div><div class="line">    ...</div></pre></td></tr></table></figure>
+<p>java如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">(getWindow().getSharedElementEnterTransition()).addListener(<span class="keyword">new</span> Transition.TransitionListener() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTransitionStart</span><span class="params">(Transition transition)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTransitionEnd</span><span class="params">(Transition transition)</span> </span>&#123;</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 测试发现部分手机(如红米note2)上加载图片会变形,没有达到centerCrop效果</div><div class="line">         * 查阅资料发现Glide配合SharedElementTransition是有坑的,需要在Transition动画结束后再加载图片</div><div class="line">         * https://github.com/TWiStErRob/glide-support/blob/master/src/glide3/java/com/bumptech/glide/supportapp/github/_847_shared_transition/DetailFragment.java</div><div class="line">         */</div><div class="line">        isTransitionEnd = <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (imgUrl != <span class="keyword">null</span>) &#123;</div><div class="line">            isImageShow = <span class="keyword">true</span>;</div><div class="line">            ImageLoader.load(mContext, imgUrl, detailBarImage);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTransitionCancel</span><span class="params">(Transition transition)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTransitionPause</span><span class="params">(Transition transition)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTransitionResume</span><span class="params">(Transition transition)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
     
       
 
@@ -1074,7 +1218,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-count">7</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1091,7 +1235,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -1128,7 +1272,7 @@
         <div class="copyright" >
   
   &copy; 
-  <span itemprop="copyrightYear">2016</span>
+  <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
